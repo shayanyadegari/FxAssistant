@@ -1,0 +1,9 @@
+django
+jupyter
+requests
+Celery
+redis
+django-celery-beat
+django-celery-results
+python-decouple
+pytz
