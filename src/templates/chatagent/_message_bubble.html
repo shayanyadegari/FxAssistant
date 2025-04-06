@@ -1,0 +1,50 @@
+{% if message.role == 'assistant' %}
+<!-- Assistant bubble -->
+<div class="chat chat-start">
+  <div class="chat-image avatar">
+    <div class="w-10 rounded-full">
+      <!-- Example: AI icon or your brand logo -->
+      <img src="https://api.iconify.design/ri:robot-fill.svg" alt="AI">
+    </div>
+  </div>
+  <div class="chat-header text-sm font-semibold">
+    Assistant
+    <time class="text-xs opacity-50 ml-1">
+      {{ message.created_at|date:"H:i" }}
+    </time>
+  </div>
+  <div class="chat-bubble bg-base-100 text-base-content text-base">
+    {{ message.content }}
+  </div>
+</div>
+
+{% elif message.role == 'user' %}
+<!-- User bubble -->
+<div class="chat chat-end">
+  <div class="chat-image avatar placeholder">
+    <div class="bg-neutral-focus text-neutral-content rounded-full w-10">
+      <span class="text-xl">U</span>
+    </div>
+  </div>
+  <div class="chat-header text-sm font-semibold">
+    You
+    <time class="text-xs opacity-50 ml-1">
+      {{ message.created_at|date:"H:i" }}
+    </time>
+  </div>
+  <div class="chat-bubble chat-bubble-info text-base text-white">
+    {{ message.content }}
+  </div>
+</div>
+
+{% else %}
+<!-- System or other roles -->
+<div class="chat chat-center">
+  <div class="chat-header text-sm">
+    {{ message.role|title }}
+  </div>
+  <div class="chat-bubble chat-bubble-secondary text-base">
+    {{ message.content }}
+  </div>
+</div>
+{% endif %}

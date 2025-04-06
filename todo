@@ -1,4 +1,6 @@
-- send objects to db.
 - data timing is different from trading view. but still is fine if we only use that.
 - in jupyter just one time we put historical data, after that its just update by celery
 - celery is complete but create interval in future
+- chat box
+- Use Django Channels (WebSocket) and stream partial tokens from OpenAI, so the user sees the response type out. That’s how ChatGPT does it in real-time.
+

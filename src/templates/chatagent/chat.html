@@ -1,0 +1,92 @@
+{% extends 'chatagent/base.html' %}
+{% load static %} {# if you need static files #}
+
+{% block title %}Chat Session #{{ session.id }}{% endblock title %}
+
+{% block sidebar %}
+<ul class="menu menu-compact">
+  {% for s in all_sessions %}
+    <li>
+      <a
+        href="{% url 'view_chat' s.id %}"
+        class="{% if s.id == session.id %} active {% endif %}"
+      >
+        Session #{{ s.id }}
+        <span class="text-xs text-base-content/50">
+          ({{ s.created_at|date:"d M Y H:i" }})
+        </span>
+      </a>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock sidebar %}
+
+{% block content %}
+<header class="navbar bg-base-100 border-b border-base-300 px-4">
+  <div class="flex-1">
+    <h2 class="text-xl font-bold">
+      Chat Session #{{ session.id }}
+    </h2>
+  </div>
+</header>
+
+<!-- Messages container (scrollable) -->
+<div
+  id="chat-container"
+  class="flex-1 overflow-y-auto p-4 space-y-4 bg-base-200"
+>
+  {% for msg in messages %}
+    {% include "chatagent/_message_bubble.html" with message=msg %}
+  {% endfor %}
+</div>
+
+<!-- Form to send messages, pinned at bottom -->
+<form
+  id="chat-form"
+  hx-post="{% url 'post_message' session.id %}"
+  hx-target="#chat-container"
+  hx-swap="beforeend"
+  hx-indicator="#loading-indicator"
+  class="bg-base-100 border-t border-base-300 p-4 flex items-center space-x-2"
+>
+  {% csrf_token %}
+  <input
+    type="text"
+    name="message"
+    placeholder="Type your message..."
+    class="input input-bordered w-full"
+  />
+  <button type="submit" class="btn btn-primary">Send</button>
+
+  <div id="loading-indicator" class="hidden text-sm text-gray-500 ml-3">
+    <span class="loading loading-spinner loading-sm"></span>
+    <span class="ml-2">Thinking...</span>
+  </div>
+</form>
+
+
+<!-- Auto-scroll script -->
+<script>
+  document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.target.id === 'chat-container') {
+      setTimeout(() => {
+        evt.target.scrollTop = evt.target.scrollHeight;
+      }, 50);
+    }
+  });
+
+  document.body.addEventListener('htmx:afterSwap', function(evt) {
+    // Only clear if the #chat-container was updated
+    if (evt.target.id === 'chat-container') {
+      // Clear the text input
+      document.querySelector('#chat-form input[name="message"]').value = '';
+
+      // Auto-scroll to the bottom
+      setTimeout(() => {
+        evt.target.scrollTop = evt.target.scrollHeight;
+      }, 50);
+    }
+  });
+</script>
+
+{% endblock content %}
